@@ -42,3 +42,13 @@ Uso esperado no Google Colab:
 1. Selecione o runtime com GPU T4 e execute as células em ordem. O dataset público é baixado automaticamente via CLI `kaggle` (com `kagglehub` como alternativa), sem exigir credenciais; também é possível enviar o `.zip` manualmente para `/content/`.
 2. Opcional: se o Kaggle exigir autenticação, configure os Secrets `KAGGLE_USERNAME`/`KAGGLE_KEY` (ou `KAGGLE_API_TOKEN`) no painel 🔑 do Colab.
 3. A quantidade de imagens sintéticas é controlada por `N_SYNTHETIC`. Os resultados (JSON/CSV, checkpoints, figuras e imagens geradas) são salvos em `/content/results_atividade4`.
+
+## Relatório final
+
+O relatório consolidado das quatro atividades é gerado a partir dos capítulos `atividade-*/RELATORIO.md` e dos arquivos em `docs/`:
+
+```bash
+./scripts/generate-report.sh
+```
+
+O script extrai as figuras das saídas salvas nos notebooks (`scripts/extract_notebook_figures.py`), consolida o Markdown em `docs/final-report.md` e gera o PDF em `docs/` com `pandoc` e `xelatex`. Se um notebook for reexecutado e a posição das células mudar, ajuste os índices em `extract_notebook_figures.py`.

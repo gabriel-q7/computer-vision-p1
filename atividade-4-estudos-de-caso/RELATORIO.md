@@ -13,7 +13,7 @@ O objetivo é montar um experimento controlado com a mesma composição de class
 ### Diagnóstico do cenário original
 
 | # | Problema | Status | Consequência |
-|---|---|---|---|
+|--:|--------------------------|------------|------------------------------------|
 | 1 | Desbalanceamento (70/20/10%) | Comprovado | Prever sempre *Normal* já rende 70% de acurácia; muitos falsos negativos de COVID |
 | 2 | Divisão não estratificada | Comprovado | Validação com poucos casos de COVID; recall instável |
 | 3 | ResNet-18 do zero com ~960 imagens | Comprovado | Memorização, coerente com a lacuna de 32 p.p. entre treino e validação |
@@ -30,7 +30,7 @@ O objetivo é montar um experimento controlado com a mesma composição de class
 O **COVID-19 Radiography Database** foi baixado pela API do Kaggle sem credenciais. Considerando apenas as três classes de interesse, havia 15.153 imagens PNG de 299×299 pixels: 10.192 *Normal*, 1.345 *Viral Pneumonia* e 3.616 *COVID*. Nenhuma estava corrompida, e 54 duplicatas exatas (MD5) foram removidas antes da seleção. Os metadados **não** trazem identificador de paciente, mas revelam a **fonte** de cada imagem:
 
 | Fonte | COVID | Normal | Viral Pneumonia |
-|---|---:|---:|---:|
+|--------------------------------|------:|------:|------:|
 | `kaggle.com` | 0 | 10.192 | 1.345 |
 | `bimcv.cipf.es` | 2.474 | 0 | 0 |
 | Outras (GitHub, Eurorad, SIRM) | 1.142 | 0 | 0 |
@@ -44,7 +44,7 @@ A amostra experimental (840/240/120) foi sorteada com semente fixa. A proporçã
 **Divisão com controle de vazamento.** Como não há ID de paciente, a divisão por paciente não foi possível. Como mitigação, imagens quase idênticas foram agrupadas por hash perceptual (dHash 16×16, distância de Hamming ≤ 10 bits) antes da divisão. Nenhum par atingiu o limiar (a menor distância entre conjuntos foi de 12 bits), de modo que cada imagem formou seu próprio grupo. Uma primeira versão com hash 8×8 encadeou centenas de radiografias distintas em um único grupo e produziu uma validação com uma única imagem. O erro foi detectado nas saídas e corrigido, e o notebook passou a interromper a execução se os grupos ou a divisão fugirem do esperado.
 
 | Conjunto | Normal | Viral Pneumonia | COVID | Total | Uso |
-|---|---:|---:|---:|---:|---|
+|--------------|------:|------:|------:|------:|------------------------------|
 | Treino de ajuste | 571 | 163 | 82 | 816 | Treinar o classificador e a cGAN |
 | Validação interna | 101 | 29 | 14 | 144 | Selecionar o checkpoint |
 | Validação real | 168 | 48 | 24 | 240 | Apenas a avaliação final de A e B |
@@ -56,7 +56,7 @@ A amostra experimental (840/240/120) foi sorteada com semente fixa. A proporçã
 **GAN condicional.** Arquitetura no estilo DCGAN em 64×64, treinada **somente** com o treino de ajuste (a ausência de imagens de validação é verificada por *assert*), com amostragem balanceada por classe.
 
 | Componente | Configuração |
-|---|---|
+|------------|--------------------------------------------|
 | Gerador | $z \in \mathbb{R}^{100}$ + *embedding* da classe (50) → Linear → 512×4×4 → 4 ConvT (BN + ReLU) → 1×64×64, Tanh |
 | Discriminador | Imagem + mapa da classe (2 canais) → 4 Conv com normalização espectral e LeakyReLU → Linear |
 | Perda | BCE com logits (não saturante), *label smoothing* de 0,9 no rótulo real |
@@ -71,7 +71,7 @@ Foram geradas **120 imagens sintéticas de COVID-19**. O Experimento B usa o mes
 ![Sintéticas de COVID-19 (acima) e reais de COVID-19 do treino reduzidas para 64×64 (abaixo).](figures/sinteticas-vs-reais.png)
 
 | Indicador (64×64) | Sintéticas | Reais (COVID) | Razão |
-|---|---:|---:|---:|
+|------------------------------------|--------:|--------:|------:|
 | Distância média entre pares (diversidade) | 12,78 | 16,38 | 0,78 |
 | Distância mediana à imagem real mais próxima | 7,10 | 8,85 | 0,80 |
 | Desvio-padrão da intensidade | 0,198 | 0,234 | — |
@@ -86,7 +86,7 @@ Foram geradas **120 imagens sintéticas de COVID-19**. O Experimento B usa o mes
 Ambos os modelos foram avaliados uma única vez na validação real (240 imagens reais, 24 de COVID-19).
 
 | Métrica | Experimento A | Experimento B | Diferença |
-|---|---:|---:|---:|
+|------------------------|-------------:|-------------:|---------------------:|
 | Acurácia global | 0,863 | 0,883 | +2,1 p.p. |
 | Macro F1 | 0,663 | 0,736 | +7,2 p.p. |
 | **Recall COVID-19** | **0,125** (3/24) | **0,250** (6/24) | **+12,5 p.p.** (+100% relativo) |
@@ -137,7 +137,7 @@ Uma ResNet-50 pré-treinada no ImageNet passa por *fine-tuning* com 800 *frames*
 ### Problemas e impacto operacional
 
 | Problema | Impacto operacional |
-|---|---|
+|------------------------------|------------------------------|
 | **Poucos dados e baixa diversidade**: ~67 *frames* por câmera, provavelmente concentrados em dias claros | O modelo falha justamente nas condições críticas para a gestão do tráfego (chuva, noite, incidentes) |
 | **Dependência entre *frames***: *frames* consecutivos da mesma câmera são quase idênticos; uma divisão aleatória coloca o "mesmo instante" no treino e na validação | Os 78% são otimistas e medem memorização da cena |
 | **Mudança de domínio**: cada câmera tem perspectiva, lente e fundo próprios; noite (faróis, ruído) e chuva (reflexos, gotas) mudam a distribuição dos pixels | Degradação silenciosa ao instalar câmeras novas ou quando o clima muda |

@@ -33,9 +33,10 @@ FIGURES = [
     (NB2, 32, 4, 'atividade-2-clip-publicidade/figures/busca-luxury-car-urban.png'),
     (NB2, 32, 6, 'atividade-2-clip-publicidade/figures/busca-premium-lifestyle.png'),
 
-    (NB3, 7, 0, 'atividade-3-cnn-pre-treinada/figures/distribuicao-classes.png'),
-    (NB3, 19, 0, 'atividade-3-cnn-pre-treinada/figures/curvas-treinamento.png'),
-    (NB3, 22, 0, 'atividade-3-cnn-pre-treinada/figures/matriz-confusao.png'),
+    (NB3, 9, 0, 'atividade-3-cnn-pre-treinada/figures/distribuicao-classes.png'),
+    (NB3, 21, 0, 'atividade-3-cnn-pre-treinada/figures/curvas-treinamento.png'),
+    (NB3, 24, 0, 'atividade-3-cnn-pre-treinada/figures/matriz-confusao.png'),
+    (NB3, 26, 0, 'atividade-3-cnn-pre-treinada/figures/erro-classificacao.png'),
 
     (NB4, 17, 0, 'atividade-4-estudos-de-caso/figures/distribuicao-original-vs-amostra.png'),
     (NB4, 35, 4, 'atividade-4-estudos-de-caso/figures/cgan-amostras-epoca-400.png'),
