@@ -8,8 +8,8 @@ Repositório organizado em quatro atividades de Visão Computacional.
 | --- | --- | --- | --- |
 | 1 | Projeto Livre: Visão Computacional com Transformers | Implementada | `atividade-1-projeto-livre/` |
 | 2 | Reconhecimento Semântico em Publicidade Visual com CLIP | Implementada | `atividade-2-clip-publicidade/` |
-| 3 | Classificador com CNN Pré-treinada | A fazer | `atividade-3-cnn-pre-treinada/` |
-| 4 | Estudos de Caso | A fazer | `atividade-4-estudos-de-caso/` |
+| 3 | Classificador com CNN Pré-treinada | Implementada | `atividade-3-cnn-pre-treinada/` |
+| 4 | Estudos de Caso | Implementada | `atividade-4-estudos-de-caso/` |
 
 ## Atividade 1 — Projeto Livre: Visão Computacional com Transformers
 
@@ -29,6 +29,16 @@ Uso esperado no Google Colab:
 2. Execute as células em ordem utilizando um runtime com GPU T4.
 3. O notebook extrai embeddings visuais e textuais, calcula a similaridade de cosseno, analisa thresholds heurísticos e executa busca semântica com visualizações e análises qualitativas completas.
 
-## Próximas atividades
+## Atividade 4 — Estudos de Caso em Deep Learning
 
-As pastas das Atividades 3 e 4 foram criadas como espaço reservado para suas futuras implementações.
+**4.1:** detecção de COVID-19 no [COVID-19 Radiography Database](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database). Amostra reprodutível de 1.200 imagens (840 Normal / 240 Viral Pneumonia / 120 COVID), divisão estratificada e agrupada por hash perceptual, ResNet-18 pré-treinada (backbone congelado) e uma GAN condicional (64×64) treinada apenas com o treino real. Compara o Experimento A (somente reais) com o Experimento B (+ sintéticas de COVID-19), tendo o recall de COVID-19 como métrica primária, com bootstrap pareado para medir a incerteza.
+
+**4.2:** análise escrita de transfer learning para análise de tráfego urbano (ResNet-50, 12 câmeras).
+
+Notebook principal: `atividade-4-estudos-de-caso/covid_cgan_case_study_colab.ipynb`.
+
+Uso esperado no Google Colab:
+
+1. Crie os Secrets `KAGGLE_USERNAME` e `KAGGLE_KEY` (ou `KAGGLE_API_TOKEN`) no painel 🔑 do Colab, com acesso liberado ao notebook.
+2. Selecione o runtime com GPU T4 e execute as células em ordem.
+3. A quantidade de imagens sintéticas é controlada por `N_SYNTHETIC`. Os resultados (JSON/CSV, checkpoints, figuras e imagens geradas) são salvos em `/content/results_atividade4`.
