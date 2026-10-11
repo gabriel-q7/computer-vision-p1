@@ -39,6 +39,6 @@ Notebook principal: `atividade-4-estudos-de-caso/covid_cgan_case_study_colab.ipy
 
 Uso esperado no Google Colab:
 
-1. Crie os Secrets `KAGGLE_USERNAME` e `KAGGLE_KEY` (ou `KAGGLE_API_TOKEN`) no painel 🔑 do Colab, com acesso liberado ao notebook.
-2. Selecione o runtime com GPU T4 e execute as células em ordem.
+1. Selecione o runtime com GPU T4 e execute as células em ordem. O dataset público é baixado automaticamente via CLI `kaggle` (com `kagglehub` como alternativa), sem exigir credenciais; também é possível enviar o `.zip` manualmente para `/content/`.
+2. Opcional: se o Kaggle exigir autenticação, configure os Secrets `KAGGLE_USERNAME`/`KAGGLE_KEY` (ou `KAGGLE_API_TOKEN`) no painel 🔑 do Colab.
 3. A quantidade de imagens sintéticas é controlada por `N_SYNTHETIC`. Os resultados (JSON/CSV, checkpoints, figuras e imagens geradas) são salvos em `/content/results_atividade4`.
