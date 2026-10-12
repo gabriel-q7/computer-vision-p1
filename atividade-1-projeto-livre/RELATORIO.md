@@ -73,7 +73,7 @@ O Attention Rollout propaga as matrizes de atenção (média das cabeças, com a
 
 - **ViT do zero não aprende com ~1.000 imagens.** O ViT treinado do zero ficou **abaixo da baseline da classe majoritária** (0,253 contra 0,324). A acurácia de treino chegou a apenas 0,40 em 20 épocas, o que indica **subajuste**, e não sobreajuste. Transformers não têm os vieses indutivos das convoluções (localidade e equivariância à translação) e precisam de muito mais dados ou de pré-treinamento. A matriz de confusão mostra previsões espalhadas, com forte tendência a *Sem Acidente*, provavelmente puxada pelo maior peso dessa classe na perda.
 - **Pré-treinamento é o fator decisivo.** O ViT-B/16 pré-treinado teve o melhor resultado (macro F1 0,576), seguido da ResNet-18 (0,518). Com pré-treinamento, o Transformer supera a CNN mesmo com poucos dados.
-- **Sobreajuste nos modelos pré-treinados.** O ViT-B/16 atingiu 0,894 de acurácia no treino contra 0,568 na validação. A lacuna de ~33 p.p. sugere que regularização adicional, congelamento parcial ou mais dados ajudariam.
+- **Sobreajuste nos modelos pré-treinados.** Na época do checkpoint (8), o ViT-B/16 tinha 0,865 de acurácia no treino contra 0,568 na validação. A lacuna de ~30 p.p. sugere que regularização adicional, congelamento parcial ou mais dados ajudariam.
 - **Classes intermediárias são as mais difíceis.** *Moderado* e *Severo* têm os menores F1, o que é esperado em uma escala ordinal com fronteiras subjetivas entre níveis vizinhos.
 
 ## Limitações

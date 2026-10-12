@@ -12,7 +12,7 @@ Construir um baseline de **transfer learning por extração de características*
 
 ### Remoção de duplicatas
 
-Uma primeira execução do notebook atingiu **100% de acurácia** na validação. Um resultado perfeito exige verificação, e a inspeção dos caminhos revelou duas estruturas paralelas, `data/<classe>` e `data/data/<classe>`, com as mesmas contagens por classe. A checagem por hash MD5 confirmou que o dataset vem **inteiramente duplicado**: na divisão por arquivo usada inicialmente, **568 das 722 imagens de validação (78,7%) tinham uma cópia exata no treino**. Aquela acurácia media memorização, não generalização.
+Uma primeira execução do notebook atingiu **100% de acurácia** na validação. Um resultado perfeito exige verificação, e a inspeção dos caminhos revelou duas estruturas paralelas, `data/<classe>` e `data/data/<classe>`, com as mesmas contagens por classe. A checagem por hash MD5 confirmou que o dataset vem **inteiramente duplicado**. Ao reproduzir fora do notebook a divisão por arquivo usada inicialmente (mesma semente), verificou-se que **568 das 722 imagens de validação (78,7%) tinham uma cópia exata no treino**. Aquela acurácia media memorização, não generalização.
 
 O notebook foi corrigido para remover as repetições **antes** da divisão:
 
@@ -62,7 +62,7 @@ A divisão é estratificada (80/20, semente 42). Ao final, o notebook verifica q
 
 ![Curvas de loss e acurácia por época.](figures/curvas-treinamento.png){width=90%}
 
-O melhor checkpoint (época 7) classificou corretamente **348 das 349 imagens** de validação: **acurácia de 0,9971**, com intervalo de confiança de Wilson (95%) de **[0,984; 0,9995]**. Todas as classes têm F1 de pelo menos 0,99. Precisão, recall e macro F1 arredondam para 1,00.
+O melhor checkpoint (época 7) classificou corretamente **348 das 349 imagens** de validação: **acurácia de 0,9971**, com intervalo de confiança de Wilson (95%) de **[0,984; 0,9995]**. Todas as classes têm F1 de pelo menos 0,987 (o menor é o de *cats*, com recall de 39/40). A macro F1 e as médias de precisão e recall arredondam para 1,00 com duas casas decimais.
 
 ![Matriz de confusão na validação.](figures/matriz-confusao.png){width=60%}
 

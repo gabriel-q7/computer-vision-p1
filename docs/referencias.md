@@ -12,7 +12,7 @@
 - RADFORD, A.; METZ, L.; CHINTALA, S. Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks. *ICLR*, 2016.
 - RADFORD, A. et al. Learning Transferable Visual Models From Natural Language Supervision. *ICML*, 2021.
 - RAHMAN, T. et al. Exploring the effect of image enhancement techniques on COVID-19 detection using chest X-ray images. *Computers in Biology and Medicine*, v. 132, 104319, 2021.
-- ROFFO, G.; VINCIARELLI, A. Personality in Computational Advertising: A Benchmark. *International Workshop on Emotion and Sentiment in Social and Expressive Media (ESSEM)*, 2016.
+- ROFFO, G.; VINCIARELLI, A. Personality in Computational Advertising: A Benchmark. *International Workshop on Emotions and Personality in Personalized Systems (EMPIRE 2016)*, ACM RecSys, Boston, 2016. CEUR-WS, v. 1680.
 - ZECH, J. R. et al. Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs: a cross-sectional study. *PLOS Medicine*, v. 15, n. 11, e1002683, 2018.
 
 **Datasets**

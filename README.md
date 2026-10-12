@@ -51,4 +51,6 @@ O relatório consolidado das quatro atividades é gerado a partir dos capítulos
 ./scripts/generate-report.sh
 ```
 
-O script extrai as figuras das saídas salvas nos notebooks (`scripts/extract_notebook_figures.py`), consolida o Markdown em `docs/final-report.md` e gera o PDF em `docs/` com `pandoc` e `xelatex`. Se um notebook for reexecutado e a posição das células mudar, ajuste os índices em `extract_notebook_figures.py`.
+O script extrai as figuras das saídas salvas nos notebooks (`scripts/extract_notebook_figures.py`), confere cada número citado nos capítulos contra essas saídas (`scripts/verify_report_numbers.py`, que interrompe a geração em caso de divergência), consolida o Markdown em `docs/final-report.md` e gera o PDF em `docs/` com `pandoc` e `xelatex`. Se um notebook for reexecutado e a posição das células mudar, ajuste os índices em `extract_notebook_figures.py`.
+
+As afirmações da Atividade 2 que só aparecem em figuras (composição do corpus, duplicatas, imagens recorrentes nos top-5) podem ser conferidas reexecutando o CLIP com `scripts/verify_clip_activity2.py <diretório do ADS-16>`.

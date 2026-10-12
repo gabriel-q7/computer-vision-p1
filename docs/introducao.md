@@ -11,7 +11,7 @@ Este relatório reúne as quatro atividades práticas de Visão Computacional e 
 
 ## Ambiente de execução
 
-Todos os notebooks foram executados no Google Colab com GPU NVIDIA Tesla T4, PyTorch 2.11 e torchvision 0.26 (CUDA 12.8). Os datasets são públicos e foram obtidos pela API oficial do Kaggle. Cada notebook fixa a semente `42` para Python, NumPy e PyTorch.
+Todos os notebooks foram executados no Google Colab com GPU NVIDIA Tesla T4. Os notebooks das Atividades 1 e 4 registram as versões usadas: PyTorch 2.11 e torchvision 0.26 (CUDA 12.8); os das Atividades 2 e 3 não imprimem as versões. Os datasets são públicos e foram obtidos pela API oficial do Kaggle. Cada notebook fixa a semente `42` para Python, NumPy e PyTorch.
 
 ## Organização do relatório
 

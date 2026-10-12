@@ -30,6 +30,9 @@ REPORT_SOURCES=(
 # Extracts the report figures from the notebook outputs before building the PDF.
 FIGURE_EXTRACTOR="scripts/extract_notebook_figures.py"
 
+# Checks every number quoted in the chapters against the notebook outputs.
+NUMBER_VERIFIER="scripts/verify_report_numbers.py"
+
 # ============================================================
 # Implementation
 # ============================================================
@@ -102,6 +105,14 @@ extract_figures() {
     info "Extracting figures from notebook outputs..."
     if ! python3 "$REPO_ROOT/$FIGURE_EXTRACTOR"; then
         error "Figure extraction failed. Check the cell indices in $FIGURE_EXTRACTOR."
+        return 1
+    fi
+}
+
+verify_numbers() {
+    info "Verifying report numbers against notebook outputs..."
+    if ! python3 "$REPO_ROOT/$NUMBER_VERIFIER"; then
+        error "Some numbers in the chapters do not match the notebook outputs. No report was generated."
         return 1
     fi
 }
@@ -264,6 +275,7 @@ main() {
     validate_dependencies
     extract_figures
     validate_sources
+    verify_numbers
     validate_image_references
     generate_markdown
     generate_pdf

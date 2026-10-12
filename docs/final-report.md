@@ -60,7 +60,7 @@ Este relatório reúne as quatro atividades práticas de Visão Computacional e 
 
 ## Ambiente de execução
 
-Todos os notebooks foram executados no Google Colab com GPU NVIDIA Tesla T4, PyTorch 2.11 e torchvision 0.26 (CUDA 12.8). Os datasets são públicos e foram obtidos pela API oficial do Kaggle. Cada notebook fixa a semente `42` para Python, NumPy e PyTorch.
+Todos os notebooks foram executados no Google Colab com GPU NVIDIA Tesla T4. Os notebooks das Atividades 1 e 4 registram as versões usadas: PyTorch 2.11 e torchvision 0.26 (CUDA 12.8); os das Atividades 2 e 3 não imprimem as versões. Os datasets são públicos e foram obtidos pela API oficial do Kaggle. Cada notebook fixa a semente `42` para Python, NumPy e PyTorch.
 
 ## Organização do relatório
 
@@ -149,7 +149,7 @@ O Attention Rollout propaga as matrizes de atenção (média das cabeças, com a
 
 - **ViT do zero não aprende com ~1.000 imagens.** O ViT treinado do zero ficou **abaixo da baseline da classe majoritária** (0,253 contra 0,324). A acurácia de treino chegou a apenas 0,40 em 20 épocas, o que indica **subajuste**, e não sobreajuste. Transformers não têm os vieses indutivos das convoluções (localidade e equivariância à translação) e precisam de muito mais dados ou de pré-treinamento. A matriz de confusão mostra previsões espalhadas, com forte tendência a *Sem Acidente*, provavelmente puxada pelo maior peso dessa classe na perda.
 - **Pré-treinamento é o fator decisivo.** O ViT-B/16 pré-treinado teve o melhor resultado (macro F1 0,576), seguido da ResNet-18 (0,518). Com pré-treinamento, o Transformer supera a CNN mesmo com poucos dados.
-- **Sobreajuste nos modelos pré-treinados.** O ViT-B/16 atingiu 0,894 de acurácia no treino contra 0,568 na validação. A lacuna de ~33 p.p. sugere que regularização adicional, congelamento parcial ou mais dados ajudariam.
+- **Sobreajuste nos modelos pré-treinados.** Na época do checkpoint (8), o ViT-B/16 tinha 0,865 de acurácia no treino contra 0,568 na validação. A lacuna de ~30 p.p. sugere que regularização adicional, congelamento parcial ou mais dados ajudariam.
 - **Classes intermediárias são as mais difíceis.** *Moderado* e *Severo* têm os menores F1, o que é esperado em uma escala ordinal com fronteiras subjetivas entre níveis vizinhos.
 
 ## Limitações
@@ -175,12 +175,23 @@ Notebook: `atividade-2-clip-publicidade/clip_semantic_advertising_colab.ipynb`.
 
 Usar o **CLIP** (*Contrastive Language-Image Pre-training*, OpenAI) em regime estritamente **zero-shot** (sem treinamento, sem *fine-tuning* e sem atualização de pesos) para:
 
-1. medir a presença de **20 conceitos semânticos** em anúncios publicitários e ordená-los por frequência;
+1. medir a presença de **20 conceitos semânticos** nas imagens do corpus e ordená-los por frequência;
 2. implementar uma **busca semântica por texto** (*zero-shot retrieval*) e analisar oito consultas que variam de genéricas a abstratas.
 
 ## Dados
 
-O **ADS-16 Computational Advertising Dataset** foi baixado do Kaggle (`groffo/ads16-dataset`). A varredura recursiva encontrou **2.697 imagens** distribuídas em **260 pastas**. Há dois tipos de pasta: as numeradas de 1 a 20, com cerca de 15 anúncios cada, e pastas identificadas por código de usuário com sufixo `IM-POS`/`IM-NEG`, com 10 a 20 imagens. O notebook trata o nome da pasta como "categoria"; essa informação serve apenas para exibição, pois a tarefa não usa rótulos.
+O **ADS-16 Computational Advertising Dataset** foi baixado do Kaggle (`groffo/ads16-dataset`). A varredura recursiva encontrou **2.697 imagens** distribuídas em **260 pastas**. Segundo o artigo original (Roffo e Vinciarelli, 2016), o ADS-16 reúne **300 anúncios reais** em 20 categorias de produto e, separadamente, imagens pessoais enviadas pelos 120 participantes do estudo, anotadas como positivas ou negativas. A contagem por tipo de pasta confirma essa composição:
+
+| Tipo de pasta | Pastas | Imagens |
+|------------------------------------|------:|------:|
+| Anúncios (pastas `1` a `20`) | 20 | 301 |
+| Imagens pessoais positivas (`U*-IM-POS`) | 120 | 1.219 |
+| Imagens pessoais negativas (`U*-IM-NEG`) | 120 | 1.177 |
+| **Total** | **260** | **2.697** |
+
+Portanto, **apenas 11% do corpus são anúncios**; o restante são fotos pessoais dos participantes. O notebook trata todas as 2.697 imagens como anúncios e usa o nome da pasta apenas para exibição. Há ainda 47 arquivos repetidos: o corpus tem 2.650 conteúdos distintos (MD5).
+
+> **Verificação independente.** A composição do corpus, as duplicatas, os percentis de similaridade e a recorrência de imagens nos top-5 não aparecem nas saídas do notebook. Eles foram calculados reexecutando o pipeline localmente (`scripts/verify_clip_activity2.py`, CLIP `ViT-B/32` em CPU). A reexecução reproduziu os mesmos top-5 das oito consultas, a mesma faixa de escores e a tabela de limiares do notebook (pequenas diferenças na 2ª casa decimal decorrem de a execução original usar precisão reduzida na GPU).
 
 ## Método
 
@@ -210,7 +221,7 @@ A similaridade de cosseno do CLIP **não é uma probabilidade**: ela mede proxim
 
 ![Média de conceitos detectados por imagem em função do limiar.](atividade-2-clip-publicidade/figures/threshold-conceitos.png){width=75%}
 
-O notebook fixou o limiar em **0,28**. A curva mostra que as similaridades se concentram em uma faixa muito estreita (aproximadamente 0,18–0,34): entre 0,20 e 0,25 a média despenca de quase 8 para menos de 0,5 conceito por imagem.
+O notebook fixou o limiar em **0,28**. As similaridades imagem-conceito ocupam uma faixa estreita: 98% dos 53.940 valores (2.697 × 20) ficam entre 0,134 e 0,259 (percentis 1 e 99), e o máximo é 0,338. Por isso, entre 0,20 e 0,25 a média despenca de quase 8 para menos de 0,5 conceito por imagem.
 
 ### Ranking de conceitos (limiar 0,28)
 
@@ -238,17 +249,18 @@ Foram executadas oito consultas: genéricas (*a product advertisement*), concret
 
 **O que as figuras mostram** (inspeção visual das saídas):
 
-- **Consultas concretas de objeto funcionam bem.** Em *a car*, as cinco imagens são anúncios automotivos (Fiat 500, BMW, acessórios Raven, peças Renault). Uma delas, porém, é um anúncio **apenas de texto** ("Cheapest Car Parts Online"), sem nenhum carro: o CLIP também "lê" o texto da imagem.
-- **Consultas específicas funcionam parcialmente.** *A luxury car in an urban environment* recupera um Maserati e um BMW, mas o fundo urbano raramente está presente; a 5ª imagem é o interior de um carro em um túnel.
-- **Consultas abstratas são fracas.** *A premium lifestyle* retorna um anúncio do aplicativo de relacionamento Badoo, um da American Apparel, uma campanha da PETA, um anúncio de app de encontros e um do McDonald's. Apenas parte desses resultados pode ser associada a "estilo de vida premium".
+- **Consultas concretas de objeto funcionam bem.** Em *a car*, as cinco imagens são anúncios da categoria automotiva (Fiat 500, BMW, acessórios Raven, peças Renault). Uma delas, porém, é um anúncio **apenas de texto** ("Cheapest Car Parts Online"), sem nenhum carro: o CLIP também "lê" o texto da imagem.
+- **Consultas específicas funcionam parcialmente.** *A luxury car in an urban environment* recupera um Maserati (duas vezes), um BMW e o Fiat 500, mas o fundo urbano raramente está presente; a 5ª imagem é o interior de um carro em um túnel. Três dos cinco resultados (os dois Maserati e o túnel) são **fotos pessoais de participantes**, não anúncios.
+- **Consultas abstratas são fracas.** *A premium lifestyle* retorna um anúncio do aplicativo de relacionamento Badoo, um da American Apparel, um anúncio de app de encontros, uma imagem de campanha da PETA (enviada por um participante, não um anúncio do corpus) e um anúncio do McDonald's. Apenas parte desses resultados pode ser associada a "estilo de vida premium".
 
 ## Discussão
 
-- **O limiar 0,28 é restritivo demais para contar conceitos.** Com ele, 98,1% das imagens não têm nenhum conceito, e o conceito mais frequente aparece em apenas 18 de 2.697 anúncios. O ranking passa a depender de poucas imagens e é instável: mudar a ordem de alguns poucos anúncios altera as posições. Note que a ordem por **similaridade média** é diferente (*a person* teria a maior média, 0,2076). Alternativas mais robustas seriam: limiar por conceito (por exemplo, um percentil da distribuição de cada conceito), atribuição *top-k* por imagem ou comparação relativa entre conceitos (softmax sobre os 20 *prompts*).
-- **Fenômeno de *hubness*.** Um pequeno conjunto de imagens domina os resultados de consultas sem relação entre si. O anúncio do **Fiat 500** aparece no top-5 de **6 das 8** consultas (inclusive *a person* e *a person using a smartphone*), o do **Badoo** em 5 das 8, e o da **Kaspersky** em 4. Esses "hubs" são anúncios prototípicos (produto, pessoa e texto em destaque) que ficam próximos de muitos textos no espaço do CLIP. Isso explica por que a busca parece razoável em consultas genéricas e falha em consultas que exigem detalhes.
+- **O limiar 0,28 é restritivo demais para contar conceitos.** Com ele, 98,1% das imagens não têm nenhum conceito, e o conceito mais frequente aparece em apenas 18 de 2.697 imagens. O ranking passa a depender de poucas imagens e é instável: mudar a similaridade de poucas imagens altera as posições. Note que a ordem por **similaridade média** é diferente (*a person* teria a maior média, 0,2076). Alternativas mais robustas seriam: limiar por conceito (por exemplo, um percentil da distribuição de cada conceito), atribuição *top-k* por imagem ou comparação relativa entre conceitos (softmax sobre os 20 *prompts*).
+- **Fenômeno de *hubness*.** Um pequeno conjunto de imagens domina os resultados de consultas sem relação entre si. O anúncio do **Fiat 500** aparece no top-5 de **6 das 8** consultas (inclusive *a person* e *a person using a smartphone*), o do **Badoo** em 5 das 8, e o da **Kaspersky** em 4. Curiosamente, os quatro anúncios mais recorrentes são todos o arquivo `11.png` de suas categorias (2, 20, 17 e 10), o que sugere um mesmo formato de peça. Esses "hubs" são anúncios prototípicos (produto, pessoa e texto em destaque) que ficam próximos de muitos textos no espaço do CLIP. Isso explica por que a busca parece razoável em consultas genéricas e falha em consultas que exigem detalhes.
 - **Efeito do template de prompt.** A função de busca aplica o mesmo template dos conceitos às consultas. Assim, *a product advertisement* se torna "an advertisement featuring a product advertisement", e todas as consultas são puxadas na direção de "anúncio típico", o que reforça o *hubness*. Comparar a busca com e sem o template seria um experimento simples e informativo.
 - **Leitura de texto (OCR implícito).** O CLIP associa palavras escritas na imagem ao conceito, como em "Car Parts", "Smartphone offers" e "Freshly Brewed Coffee" (este último aparece em *a cold drink being advertised*). Isso é útil para anúncios, mas também é uma vulnerabilidade conhecida a "ataques tipográficos".
-- **Duplicatas no corpus.** Imagens idênticas aparecem em posições consecutivas (o Maserati em *luxury car* e as latas de refrigerante em *cold drink*). Elas ocupam vagas do top-5 e inflam contagens; uma deduplicação por hash antes da indexação resolveria.
+- **Mistura de anúncios e fotos pessoais.** Como o corpus inclui as imagens pessoais dos participantes, 8 das 40 posições dos top-5 são fotos pessoais, e o ranking de conceitos descreve sobretudo essas fotos (89% do corpus), não a publicidade. Para responder à pergunta da atividade, a análise deveria se restringir às 301 imagens das pastas de anúncios.
+- **Duplicatas no corpus.** Há 47 arquivos repetidos. As latas de refrigerante em *cold drink* são uma cópia exata (mesmo MD5) e ocupam duas vagas do top-5; o Maserati em *luxury car* aparece duas vezes como miniatura e original (conteúdos diferentes, mesma foto). Uma deduplicação por hash exato e perceptual antes da indexação resolveria.
 - **Divergência com a tabela qualitativa do notebook.** A tabela de "comportamento observado" do notebook descreve resultados mais favoráveis do que os exibidos nas figuras (por exemplo, "precisão de 100%" para *a person*, cujo top-5 inclui o anúncio do Fiat 500 sem pessoa visível). Este relatório adota a descrição baseada nas figuras efetivamente geradas.
 
 ## Limitações
@@ -278,7 +290,7 @@ Construir um baseline de **transfer learning por extração de características*
 
 ### Remoção de duplicatas
 
-Uma primeira execução do notebook atingiu **100% de acurácia** na validação. Um resultado perfeito exige verificação, e a inspeção dos caminhos revelou duas estruturas paralelas, `data/<classe>` e `data/data/<classe>`, com as mesmas contagens por classe. A checagem por hash MD5 confirmou que o dataset vem **inteiramente duplicado**: na divisão por arquivo usada inicialmente, **568 das 722 imagens de validação (78,7%) tinham uma cópia exata no treino**. Aquela acurácia media memorização, não generalização.
+Uma primeira execução do notebook atingiu **100% de acurácia** na validação. Um resultado perfeito exige verificação, e a inspeção dos caminhos revelou duas estruturas paralelas, `data/<classe>` e `data/data/<classe>`, com as mesmas contagens por classe. A checagem por hash MD5 confirmou que o dataset vem **inteiramente duplicado**. Ao reproduzir fora do notebook a divisão por arquivo usada inicialmente (mesma semente), verificou-se que **568 das 722 imagens de validação (78,7%) tinham uma cópia exata no treino**. Aquela acurácia media memorização, não generalização.
 
 O notebook foi corrigido para remover as repetições **antes** da divisão:
 
@@ -328,7 +340,7 @@ A divisão é estratificada (80/20, semente 42). Ao final, o notebook verifica q
 
 ![Curvas de loss e acurácia por época.](atividade-3-cnn-pre-treinada/figures/curvas-treinamento.png){width=90%}
 
-O melhor checkpoint (época 7) classificou corretamente **348 das 349 imagens** de validação: **acurácia de 0,9971**, com intervalo de confiança de Wilson (95%) de **[0,984; 0,9995]**. Todas as classes têm F1 de pelo menos 0,99. Precisão, recall e macro F1 arredondam para 1,00.
+O melhor checkpoint (época 7) classificou corretamente **348 das 349 imagens** de validação: **acurácia de 0,9971**, com intervalo de confiança de Wilson (95%) de **[0,984; 0,9995]**. Todas as classes têm F1 de pelo menos 0,987 (o menor é o de *cats*, com recall de 39/40). A macro F1 e as médias de precisão e recall arredondam para 1,00 com duas casas decimais.
 
 ![Matriz de confusão na validação.](atividade-3-cnn-pre-treinada/figures/matriz-confusao.png){width=60%}
 
@@ -562,7 +574,7 @@ A acurácia é uma **média** sobre a distribuição da validação. Se a valida
 - RADFORD, A.; METZ, L.; CHINTALA, S. Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks. *ICLR*, 2016.
 - RADFORD, A. et al. Learning Transferable Visual Models From Natural Language Supervision. *ICML*, 2021.
 - RAHMAN, T. et al. Exploring the effect of image enhancement techniques on COVID-19 detection using chest X-ray images. *Computers in Biology and Medicine*, v. 132, 104319, 2021.
-- ROFFO, G.; VINCIARELLI, A. Personality in Computational Advertising: A Benchmark. *International Workshop on Emotion and Sentiment in Social and Expressive Media (ESSEM)*, 2016.
+- ROFFO, G.; VINCIARELLI, A. Personality in Computational Advertising: A Benchmark. *International Workshop on Emotions and Personality in Personalized Systems (EMPIRE 2016)*, ACM RecSys, Boston, 2016. CEUR-WS, v. 1680.
 - ZECH, J. R. et al. Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs: a cross-sectional study. *PLOS Medicine*, v. 15, n. 11, e1002683, 2018.
 
 **Datasets**
