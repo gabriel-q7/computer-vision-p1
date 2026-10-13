@@ -26,6 +26,10 @@ O notebook foi corrigido para remover as repetições **antes** da divisão:
 
 As 19 quase duplicatas são a mesma foto em outra resolução ou compressão; os pares foram conferidos visualmente.
 
+### Divisão treino/validação
+
+A divisão das imagens distintas é estratificada (80/20, semente 42). Ao final, o notebook verifica que nenhum MD5 se repete entre treino e validação e que a imagem de validação mais parecida com alguma do treino ainda está a 12 bits de distância no hash perceptual, acima do limiar de 10.
+
 | Classe | Total | Treino | Validação |
 |---|---:|---:|---:|
 | bike | 360 | 288 | 72 |
@@ -38,8 +42,6 @@ As 19 quase duplicatas são a mesma foto em outra resolução ou compressão; os
 | **Total** | **1.745** | **1.396** | **349** |
 
 ![Distribuição das imagens distintas por classe.](figures/distribuicao-classes.png){width=75%}
-
-A divisão é estratificada (80/20, semente 42). Ao final, o notebook verifica que nenhum MD5 se repete entre treino e validação e que a imagem de validação mais parecida com alguma do treino ainda está a 12 bits de distância no hash perceptual, acima do limiar de 10.
 
 ## Método
 

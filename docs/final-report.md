@@ -2,7 +2,7 @@
 title: "Deep Learning and Computer Vision"
 subtitle: "Relatório das Atividades 1 a 4"
 author: "Gabriel Aguiar Aquino"
-date: "11 de outubro de 2026"
+date: "12 de outubro de 2026"
 lang: pt-BR
 geometry: margin=2.5cm
 toc: true
@@ -11,6 +11,29 @@ header-includes:
   - \usepackage{float}
   - \floatplacement{figure}{H}
 ---
+
+\newpage
+
+
+<!-- Source: docs/repositorio.md -->
+
+# Repositório do código {.unnumbered}
+
+Todo o código deste trabalho está disponível publicamente no GitHub:
+
+**<https://github.com/gabriel-q7/computer-vision-p1>**
+
+| Diretório | Conteúdo |
+|------------------------------------|----------------------------------------------|
+| `atividade-1-projeto-livre/` | Notebook da Atividade 1 (ViT para severidade de acidentes) e capítulo do relatório |
+| `atividade-2-clip-publicidade/` | Notebook da Atividade 2 (CLIP *zero-shot* em publicidade) e capítulo do relatório |
+| `atividade-3-cnn-pre-treinada/` | Notebook da Atividade 3 (ResNet-50 com extração de características) e capítulo do relatório |
+| `atividade-4-estudos-de-caso/` | Notebook da Atividade 4 (COVID-19 com cGAN e análise de tráfego urbano) e capítulo do relatório |
+| `scripts/` | Geração deste relatório, extração das figuras e verificação automática dos números |
+| `docs/` | Seções comuns do relatório e o PDF gerado |
+
+Os notebooks são executáveis no Google Colab e estão versionados com as saídas das execuções que deram origem aos resultados apresentados aqui. O relatório pode ser regenerado com `./scripts/generate-report.sh`, que confere cada número citado contra essas saídas antes de gerar o PDF.
+
 
 \newpage
 
@@ -49,10 +72,10 @@ Todos os números, tabelas e figuras de resultados apresentados neste relatório
 
 # Introdução
 
-Este relatório reúne as quatro atividades práticas de Visão Computacional e Deep Learning desenvolvidas no repositório `computer-vision-p1`. Cada atividade foi implementada como um notebook executável no Google Colab e explora uma família diferente de técnicas.
+Este relatório reúne as quatro atividades práticas de Visão Computacional e Deep Learning desenvolvidas no repositório [`computer-vision-p1`](https://github.com/gabriel-q7/computer-vision-p1). Cada atividade foi implementada como um notebook executável no Google Colab e explora uma família diferente de técnicas.
 
 | Atividade | Tema | Técnica principal | Dataset |
-|---:|----------------|----------------------|----------------|
+|-----------:|------------------|----------------------|------------------|
 | 1 | Classificação de severidade de acidentes | Vision Transformer (do zero e pré-treinado) e ResNet-18 | Car Accidents and Deformation Dataset (CADD) |
 | 2 | Reconhecimento semântico em publicidade | CLIP (ViT-B/32) em regime *zero-shot* | ADS-16 |
 | 3 | Classificador com CNN pré-treinada | ResNet-50 com extração de características | Images Dataset (7 classes) |
@@ -64,7 +87,7 @@ Todos os notebooks foram executados no Google Colab com GPU NVIDIA Tesla T4. Os 
 
 ## Organização do relatório
 
-Cada capítulo segue a mesma estrutura: objetivo, dados, método, resultados e discussão crítica, incluindo as limitações. Os números citados são os registrados nas saídas dos notebooks versionados no repositório, e as figuras foram extraídas dessas mesmas saídas.
+Os capítulos das Atividades 1 a 3 seguem a mesma estrutura: objetivo, dados, método, resultados, discussão crítica e limitações. O capítulo da Atividade 4 se divide em duas partes: o estudo experimental de COVID-19 (4.1), que parte do diagnóstico do cenário proposto e termina com plano de melhorias e limitações, e a análise escrita do caso de tráfego urbano (4.2), sem experimentos. Os números citados são os registrados nas saídas dos notebooks versionados no repositório, e as figuras foram extraídas dessas mesmas saídas.
 
 Ao longo do relatório, adota-se uma postura crítica em relação aos próprios resultados: métricas muito altas ou muito baixas são investigadas, e problemas de protocolo (por exemplo, seleção de modelo no mesmo conjunto usado para reportar o desempenho) são apontados explicitamente.
 
@@ -304,6 +327,10 @@ O notebook foi corrigido para remover as repetições **antes** da divisão:
 
 As 19 quase duplicatas são a mesma foto em outra resolução ou compressão; os pares foram conferidos visualmente.
 
+### Divisão treino/validação
+
+A divisão das imagens distintas é estratificada (80/20, semente 42). Ao final, o notebook verifica que nenhum MD5 se repete entre treino e validação e que a imagem de validação mais parecida com alguma do treino ainda está a 12 bits de distância no hash perceptual, acima do limiar de 10.
+
 | Classe | Total | Treino | Validação |
 |---|---:|---:|---:|
 | bike | 360 | 288 | 72 |
@@ -316,8 +343,6 @@ As 19 quase duplicatas são a mesma foto em outra resolução ou compressão; os
 | **Total** | **1.745** | **1.396** | **349** |
 
 ![Distribuição das imagens distintas por classe.](atividade-3-cnn-pre-treinada/figures/distribuicao-classes.png){width=75%}
-
-A divisão é estratificada (80/20, semente 42). Ao final, o notebook verifica que nenhum MD5 se repete entre treino e validação e que a imagem de validação mais parecida com alguma do treino ainda está a 12 bits de distância no hash perceptual, acima do limiar de 10.
 
 ## Método
 
@@ -498,7 +523,7 @@ A diferença absoluta de recall é de **12,5 pontos percentuais**. A diferença 
 
 ### Plano integrado de melhorias
 
-**Baixo custo (próximo experimento, sem novos dados):**
+**Baixo custo (próximo experimento, sem novos dados)**
 
 1. Repetir A e B com várias sementes e com validação cruzada estratificada, reportando média, desvio e intervalos de confiança.
 2. Comparar B com alternativas baratas de balanceamento: *class weights* e `WeightedRandomSampler`. Se igualarem o ganho, a cGAN não se justifica.
@@ -507,9 +532,25 @@ A diferença absoluta de recall é de **12,5 pontos percentuais**. A diferença 
 5. Investigar atalhos: Grad-CAM, treino com pulmões segmentados (máscaras do próprio dataset) e um classificador que tente prever a **fonte** da imagem.
 6. Melhorar a cGAN: maior resolução, DiffAugment ou ADA, varredura de `N_SYNTHETIC` usando apenas a validação interna, e um controle que degrade imagens reais para 64×64.
 
-**Exigem novos dados ou validação clínica:** divisão por paciente com identificadores reais; COVID e controles vindos **das mesmas instituições e equipamentos**; conjunto de teste independente e validação externa multicêntrica; revisão das previsões e das sintéticas por radiologistas; documentação de limitações e riscos (*model card*).
+**Exigem novos dados ou validação clínica**
+
+1. Divisão por paciente, com identificadores reais.
+2. COVID e controles vindos **das mesmas instituições e equipamentos**.
+3. Conjunto de teste independente e validação externa multicêntrica.
+4. Revisão das previsões e das imagens sintéticas por radiologistas.
+5. Documentação de limitações e riscos (*model card*).
 
 > Nenhum modelo desta atividade está apto a apoiar diagnóstico médico.
+
+### Limitações
+
+1. Sem identificador de paciente, o agrupamento por hash perceptual reduz, mas não elimina, o vazamento entre pacientes.
+2. A validação tem apenas 24 casos de COVID, e cada caso move o recall em 4,2 p.p.
+3. Os resultados vêm de uma única semente e de uma única divisão.
+4. Classe e fonte dos dados estão completamente confundidas (COVID vem de repositórios distintos de *Normal* e *Viral Pneumonia*).
+5. A cGAN em 64×64 foi treinada com 82 radiografias reais de COVID, sem métrica de qualidade validada para imagens médicas e sem revisão clínica.
+6. O baseline com transfer learning **não** reproduz a ResNet-18 treinada do zero do cenário; os números não são comparáveis aos 93%/61% do enunciado.
+7. A amostra tem proporções artificiais (70/20/10), diferentes do dataset e de qualquer prevalência clínica.
 
 ## Atividade 4.2 — Transfer learning para análise de tráfego urbano
 
@@ -543,16 +584,6 @@ Uma ResNet-50 pré-treinada no ImageNet passa por *fine-tuning* com 800 *frames*
 ### Por que 78% de acurácia não garante desempenho confiável
 
 A acurácia é uma **média** sobre a distribuição da validação. Se a validação compartilha câmeras, ângulos, dias e condições com o treino, ela mede a capacidade de reconhecer cenas já vistas, e não de operar em condições novas. O número também não mostra **onde** estão os 22% de erro. As falhas sistemáticas observadas indicam que os erros se concentram justamente nas fatias mais críticas (noite, chuva, câmeras novas). Sob mudança de domínio, o desempenho em uma distribuição não é evidência sobre outra: em uma noite chuvosa numa câmera nova, a acurácia real pode ser muito inferior a 78%. Confiabilidade operacional exige avaliação por câmera, por condição e ao longo do tempo, além de monitoramento contínuo.
-
-## Limitações
-
-1. Sem identificador de paciente, o agrupamento por hash perceptual reduz, mas não elimina, o vazamento entre pacientes.
-2. A validação tem apenas 24 casos de COVID, e cada caso move o recall em 4,2 p.p.
-3. Os resultados vêm de uma única semente e de uma única divisão.
-4. Classe e fonte dos dados estão completamente confundidas (COVID vem de repositórios distintos de *Normal* e *Viral Pneumonia*).
-5. A cGAN em 64×64 foi treinada com 82 radiografias reais de COVID, sem métrica de qualidade validada para imagens médicas e sem revisão clínica.
-6. O baseline com transfer learning **não** reproduz a ResNet-18 treinada do zero do cenário; os números não são comparáveis aos 93%/61% do enunciado.
-7. A amostra tem proporções artificiais (70/20/10), diferentes do dataset e de qualquer prevalência clínica.
 
 
 \newpage

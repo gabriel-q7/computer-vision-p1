@@ -115,7 +115,7 @@ A diferença absoluta de recall é de **12,5 pontos percentuais**. A diferença 
 
 ### Plano integrado de melhorias
 
-**Baixo custo (próximo experimento, sem novos dados):**
+**Baixo custo (próximo experimento, sem novos dados)**
 
 1. Repetir A e B com várias sementes e com validação cruzada estratificada, reportando média, desvio e intervalos de confiança.
 2. Comparar B com alternativas baratas de balanceamento: *class weights* e `WeightedRandomSampler`. Se igualarem o ganho, a cGAN não se justifica.
@@ -124,9 +124,25 @@ A diferença absoluta de recall é de **12,5 pontos percentuais**. A diferença 
 5. Investigar atalhos: Grad-CAM, treino com pulmões segmentados (máscaras do próprio dataset) e um classificador que tente prever a **fonte** da imagem.
 6. Melhorar a cGAN: maior resolução, DiffAugment ou ADA, varredura de `N_SYNTHETIC` usando apenas a validação interna, e um controle que degrade imagens reais para 64×64.
 
-**Exigem novos dados ou validação clínica:** divisão por paciente com identificadores reais; COVID e controles vindos **das mesmas instituições e equipamentos**; conjunto de teste independente e validação externa multicêntrica; revisão das previsões e das sintéticas por radiologistas; documentação de limitações e riscos (*model card*).
+**Exigem novos dados ou validação clínica**
+
+1. Divisão por paciente, com identificadores reais.
+2. COVID e controles vindos **das mesmas instituições e equipamentos**.
+3. Conjunto de teste independente e validação externa multicêntrica.
+4. Revisão das previsões e das imagens sintéticas por radiologistas.
+5. Documentação de limitações e riscos (*model card*).
 
 > Nenhum modelo desta atividade está apto a apoiar diagnóstico médico.
+
+### Limitações
+
+1. Sem identificador de paciente, o agrupamento por hash perceptual reduz, mas não elimina, o vazamento entre pacientes.
+2. A validação tem apenas 24 casos de COVID, e cada caso move o recall em 4,2 p.p.
+3. Os resultados vêm de uma única semente e de uma única divisão.
+4. Classe e fonte dos dados estão completamente confundidas (COVID vem de repositórios distintos de *Normal* e *Viral Pneumonia*).
+5. A cGAN em 64×64 foi treinada com 82 radiografias reais de COVID, sem métrica de qualidade validada para imagens médicas e sem revisão clínica.
+6. O baseline com transfer learning **não** reproduz a ResNet-18 treinada do zero do cenário; os números não são comparáveis aos 93%/61% do enunciado.
+7. A amostra tem proporções artificiais (70/20/10), diferentes do dataset e de qualquer prevalência clínica.
 
 ## Atividade 4.2 — Transfer learning para análise de tráfego urbano
 
@@ -160,13 +176,3 @@ Uma ResNet-50 pré-treinada no ImageNet passa por *fine-tuning* com 800 *frames*
 ### Por que 78% de acurácia não garante desempenho confiável
 
 A acurácia é uma **média** sobre a distribuição da validação. Se a validação compartilha câmeras, ângulos, dias e condições com o treino, ela mede a capacidade de reconhecer cenas já vistas, e não de operar em condições novas. O número também não mostra **onde** estão os 22% de erro. As falhas sistemáticas observadas indicam que os erros se concentram justamente nas fatias mais críticas (noite, chuva, câmeras novas). Sob mudança de domínio, o desempenho em uma distribuição não é evidência sobre outra: em uma noite chuvosa numa câmera nova, a acurácia real pode ser muito inferior a 78%. Confiabilidade operacional exige avaliação por câmera, por condição e ao longo do tempo, além de monitoramento contínuo.
-
-## Limitações
-
-1. Sem identificador de paciente, o agrupamento por hash perceptual reduz, mas não elimina, o vazamento entre pacientes.
-2. A validação tem apenas 24 casos de COVID, e cada caso move o recall em 4,2 p.p.
-3. Os resultados vêm de uma única semente e de uma única divisão.
-4. Classe e fonte dos dados estão completamente confundidas (COVID vem de repositórios distintos de *Normal* e *Viral Pneumonia*).
-5. A cGAN em 64×64 foi treinada com 82 radiografias reais de COVID, sem métrica de qualidade validada para imagens médicas e sem revisão clínica.
-6. O baseline com transfer learning **não** reproduz a ResNet-18 treinada do zero do cenário; os números não são comparáveis aos 93%/61% do enunciado.
-7. A amostra tem proporções artificiais (70/20/10), diferentes do dataset e de qualquer prevalência clínica.

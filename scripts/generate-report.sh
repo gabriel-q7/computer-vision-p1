@@ -16,6 +16,7 @@ REPORT_AUTHOR="Gabriel Aguiar Aquino"
 
 # Paths are relative to the repository root. Their order is preserved.
 REPORT_SOURCES=(
+    "docs/repositorio.md"
     "docs/ai-use-disclosure.md"
     "docs/introducao.md"
 
